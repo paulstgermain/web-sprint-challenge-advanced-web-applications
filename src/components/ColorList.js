@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import EditMenu from './EditMenu';
-import axios from "axios";
+import AddMenu from './AddMenu';
 import { axiosWithAuth } from "../helpers/axiosWithAuth";
 
 const initialColor = {
@@ -12,6 +12,9 @@ const ColorList = ({ colors, updateColors }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
+  const [adding, setAdding] = useState(false);
+  const [colorToAdd, setColorToAdd] = useState(initialColor);
+
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
@@ -22,7 +25,6 @@ const ColorList = ({ colors, updateColors }) => {
 
     axiosWithAuth().put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
     .then(res => {
-      console.log(res);
       updateColors(colors.map(color => {
         if(color.id === res.data.id){
           return res.data;
@@ -39,7 +41,6 @@ const ColorList = ({ colors, updateColors }) => {
   const deleteColor = color => {
     axiosWithAuth().delete(`http://localhost:5000/api/colors/${color.id}`)
     .then(res => {
-      console.log(res);
       updateColors(colors.filter(color => color.id !== Number(res.data)));
     })
     .catch(err => {
@@ -47,10 +48,24 @@ const ColorList = ({ colors, updateColors }) => {
     })
   };
 
+  const addColor = e => {
+    e.preventDefault();
+    setAdding(true);
+
+    axiosWithAuth().post('http://localhost:5000/api/colors', colorToAdd)
+    .then(res => {
+      updateColors(res.data);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+
   return (
     <div className="colors-wrap">
       <p>colors</p>
-      <button>Add a New Color</button>
+      <button onClick={() => setAdding(!adding)}>Add a New Color</button>
+      {adding && <AddMenu colorToAdd={colorToAdd} addColor={addColor} setColorToAdd={setColorToAdd} setAdding={setAdding} initColor={initialColor} />}
       <ul>
         {colors.map(color => (
           <li key={color.color} onClick={() => editColor(color)}>
