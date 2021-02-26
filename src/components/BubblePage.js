@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { axiosWithAuth } from '../helpers/axiosWithAuth';
 
 import { fetchColors } from '../api/fetchColors';
 
@@ -11,7 +9,7 @@ const BubblePage = () => {
   const [colorList, setColorList] = useState([]);
 
   // 🔽 Uses an imported API call to receive initial data, this setup allows for easier testing of our isolated API call
-  
+
   useEffect(() => {
     fetchColors()
     .then(res => {
