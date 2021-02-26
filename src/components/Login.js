@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useHistory } from 'react-router-dom';
 import axios from "axios";
 
@@ -26,16 +26,18 @@ const Login = () => {
     
   // }, []);
 
+  // 🔼 Didn't use the useEffect as I personally found it redundant here - no need to use a useEffect to determine when our axios call can run when it will only be run on form submission.
+
   const submitHandler = e => {
     e.preventDefault();
+
+    // 🔽 Ternary operator to determine wether to display an error message on receiving any empty fields
 
     (formValues.username === '' || formValues.password === '') 
     ? 
     setErrorValue('Username or Password not valid.') : setErrorValue(null);
 
-    (formValues.username !== 'Lambda School' || formValues.password !== 'i<3Lambd4')
-    ?
-    setErrorValue('Username or Password not valid.') : setErrorValue(null);
+    // 🔽 Make axios call, handle errors by displaying to the page
 
     axios.post('http://localhost:5000/api/login', formValues)
     .then(res => {
@@ -44,7 +46,8 @@ const Login = () => {
       push('/bubbles')
     })
     .catch(err => {
-      console.log(err);
+      setErrorValue('Username or Password not valid.');
+      setFormValues(initFormValues);
     });
   };
 
